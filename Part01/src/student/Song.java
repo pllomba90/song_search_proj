@@ -3,7 +3,7 @@
  * **********************************************************************
  *                     Revision History (newest first)
  ************************************************************************
- *
+ *01/26/26 Peter Lombardo - Completed getters, toString, and compareTo methods
  * 8.2016 - Anne Applin - formatting and JavaDoc skeletons added
  * 2015 -   Prof. Bob Boothe - Starting code and main for testing
  ************************************************************************
