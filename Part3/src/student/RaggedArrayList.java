@@ -3,6 +3,7 @@
  * ****************************************************************************
  *                           Revision History
  * ****************************************************************************
+ * 02/24/2026 Giovanni Braun - Implemented add with L2 splitting
  * 02/08/2026 Pete Lombardo - Wrote findEnd method and recorded tests
  * 02/04/26 Pete Lombardo - Wrote findFront method
  * 8/2015 - Anne Applin - Added formatting and JavaDoc 
@@ -306,14 +307,68 @@ public class RaggedArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * add object after any other matching values findEnd will give the
-     * insertion position
+     * Split a full level 2 array into two arrays and insert the new array into
+     * the level 1 structure right after the source row.
+     *
+     * @param l1Index index of the L2 array to split
+     */
+    private void splitL2(int l1Index) {
+        L2Array current = (L2Array) l1Array[l1Index];
+        int mid = current.numUsed / 2;
+
+        // ensure L1 has room to insert a new row and still keep an empty slot
+        if (l1NumUsed >= l1Array.length - 1) {
+            l1Array = Arrays.copyOf(l1Array, l1Array.length * 2);
+        }
+
+        // shift existing L2 references to make space for the new row
+        if (l1NumUsed - (l1Index + 1) > 0) {
+            System.arraycopy(l1Array, l1Index + 1, l1Array, l1Index + 2,
+                    l1NumUsed - (l1Index + 1));
+        }
+
+        L2Array newL2 = new L2Array(current.items.length);
+        int moveCount = current.numUsed - mid;
+        System.arraycopy(current.items, mid, newL2.items, 0, moveCount);
+        Arrays.fill(current.items, mid, current.numUsed, null);
+
+        current.numUsed = mid;
+        newL2.numUsed = moveCount;
+
+        l1Array[l1Index + 1] = newL2;
+        l1NumUsed++;
+    }
+
+    /**
+     * add object in sorted order, placing duplicates at the earliest
+     * matching position to keep deterministic ordering
      *
      * @param item the thing we are searching for a place to put.
      * @return
      */
     public boolean add(E item) {
-        // TO DO in part 4 and NOT BEFORE
+        // find insertion point using earliest matching position
+        ListLoc loc = findFront(item);
+        L2Array target = (L2Array) l1Array[loc.level1Index];
+
+        // if target row is full, split first to create room
+        if (target.numUsed == target.items.length) {
+            splitL2(loc.level1Index);
+            loc = findFront(item);
+            target = (L2Array) l1Array[loc.level1Index];
+        }
+
+        // shift items to open a slot, then insert
+        System.arraycopy(target.items, loc.level2Index, target.items,
+                loc.level2Index + 1, target.numUsed - loc.level2Index);
+        target.items[loc.level2Index] = item;
+        target.numUsed++;
+        size++;
+
+        // if the insert left this row full, split to restore invariants
+        if (target.numUsed == target.items.length) {
+            splitL2(loc.level1Index);
+        }
 
         return true;
     }
