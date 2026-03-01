@@ -1,4 +1,4 @@
-/**
+/**  
  * File: RaggedArrayList.java
  * ****************************************************************************
  *                           Revision History
@@ -6,7 +6,7 @@
  * 02/24/2026 Giovanni Braun - Implemented add with L2 splitting
  * 02/08/2026 Pete Lombardo - Wrote findEnd method and recorded tests
  * 02/04/26 Pete Lombardo - Wrote findFront method
- * 8/2015 - Anne Applin - Added formatting and JavaDoc
+ * 8/2015 - Anne Applin - Added formatting and JavaDoc 
  * 2015 - Bob Boothe - starting code
  * ****************************************************************************
  */
@@ -22,7 +22,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 /**
- * *
+ * * 
  * The RaggedArrayList is a 2 level data structure that is an array of arrays.
  *
  * It keeps the items in sorted order according to the comparator. Duplicates
@@ -30,15 +30,15 @@ import java.util.Scanner;
  *
  * NOTE: normally fields, internal nested classes and non API methods should all
  * be private, however they have been made public so that the tester code can
- * set them
- *
+ * set them 
  * @author Bob Booth
- * @param <E> A generic data type so that this structure can be built with any
+ * @param <E>  A generic data type so that this structure can be built with any
  * data type (object)
  */
 public class RaggedArrayList<E> implements Iterable<E> {
 
     // must be even so when split get two equal pieces
+
     private static final int MINIMUM_SIZE = 4;
     /**
      * The total number of elements in the entire RaggedArrayList
@@ -75,8 +75,9 @@ public class RaggedArrayList<E> implements Iterable<E> {
 
     /**
      * ***********************************************************
-     * nested class for 2nd level arrays read and understand it. (DONE - do not
-     * change)
+     * nested class for 2nd level arrays 
+     * read and understand it.
+     * (DONE - do not change)
      */
     public class L2Array {
 
@@ -101,10 +102,12 @@ public class RaggedArrayList<E> implements Iterable<E> {
         }
     }// end of nested class L2Array
 
+   
     // ***********************************************************
+    
     /**
-     * total size (number of entries) in the entire data structure (DONE - do
-     * not change)
+     * total size (number of entries) in the entire data structure 
+     * (DONE - do not change)
      *
      * @return total size of the data structure
      */
@@ -114,7 +117,8 @@ public class RaggedArrayList<E> implements Iterable<E> {
 
     /**
      * null out all references so garbage collector can grab them but keep
-     * otherwise empty l1Array and 1st L2Array (DONE - Do not change)
+     * otherwise empty l1Array and 1st L2Array 
+     * (DONE - Do not change)
      */
     public void clear() {
         size = 0;
@@ -129,8 +133,8 @@ public class RaggedArrayList<E> implements Iterable<E> {
 
     /**
      * *********************************************************
-     * nested class for a list position used only internally 2 parts: level 1
-     * index and level 2 index
+     * nested class for a list position used only internally 2 parts: 
+     * level 1 index and level 2 index
      */
     public class ListLoc {
 
@@ -156,8 +160,8 @@ public class RaggedArrayList<E> implements Iterable<E> {
         }
 
         /**
-         * test if two ListLoc's are to the same location (done -- do not
-         * change)
+         * test if two ListLoc's are to the same location 
+         * (done -- do not change)
          *
          * @param otherObj the other listLoc
          * @return true if they are the same location and false otherwise
@@ -172,10 +176,9 @@ public class RaggedArrayList<E> implements Iterable<E> {
             return level1Index == other.level1Index
                     && level2Index == other.level2Index;
         }
-
+        
         /**
          * Standard toString for debugging. (Optional but helpful)
-         *
          * @return a string representation of the location
          */
         @Override
@@ -198,56 +201,58 @@ public class RaggedArrayList<E> implements Iterable<E> {
      * find 1st matching entry
      *
      * @param item the thing we are searching for a place to put.
-     * @return ListLoc of 1st matching item or of 1st item greater than the item
-     * if no match this might be an unused slot at the end of a level 2 array
+     * @return ListLoc of 1st matching item or of 1st item greater than 
+     * the item if no match this might be an unused slot at the end of a 
+     * level 2 array
      */
     public ListLoc findFront(E item) {
-        int l1Idx = 0;
+    int l1Idx = 0;
+    
 
-        while (l1Idx < l1NumUsed - 1 && l1Array[l1Idx + 1] != null) {
-            L2Array currentL2 = (L2Array) l1Array[l1Idx];
-
-            if (comp.compare(item, currentL2.items[currentL2.numUsed - 1]) > 0) {
-                l1Idx++;
-            } else {
-                break;
-            }
-        }
-
-        L2Array targetL2 = (L2Array) l1Array[l1Idx];
-        int l2Idx = Arrays.binarySearch(targetL2.items, 0, targetL2.numUsed, item, comp);
-
-        if (l2Idx < 0) {
-            l2Idx = -(l2Idx + 1);
+    while (l1Idx < l1NumUsed - 1 && l1Array[l1Idx + 1] != null) {
+        L2Array currentL2 = (L2Array) l1Array[l1Idx];
+        
+        if (comp.compare(item, currentL2.items[currentL2.numUsed - 1]) > 0) {
+            l1Idx++;
         } else {
+            break;
+        }
+    }
 
-            boolean searching = true;
-            while (searching) {
-                while (l2Idx > 0 && comp.compare(item, targetL2.items[l2Idx - 1]) == 0) {
-                    l2Idx--;
-                }
 
-                if (l2Idx == 0 && l1Idx > 0) {
-                    L2Array prevL2 = (L2Array) l1Array[l1Idx - 1];
-                    if (comp.compare(item, prevL2.items[prevL2.numUsed - 1]) == 0) {
-                        l1Idx--;
-                        targetL2 = prevL2;
-                        l2Idx = targetL2.numUsed - 1;
-                    } else {
-                        searching = false;
-                    }
+    L2Array targetL2 = (L2Array) l1Array[l1Idx];
+    int l2Idx = Arrays.binarySearch(targetL2.items, 0, targetL2.numUsed, item, comp);
+
+    if (l2Idx < 0) {
+        l2Idx = -(l2Idx + 1);
+    } else {
+
+        boolean searching = true;
+        while (searching) {
+            while (l2Idx > 0 && comp.compare(item, targetL2.items[l2Idx - 1]) == 0) {
+                l2Idx--;
+            }
+            
+            if (l2Idx == 0 && l1Idx > 0) {
+                L2Array prevL2 = (L2Array) l1Array[l1Idx - 1];
+                if (comp.compare(item, prevL2.items[prevL2.numUsed - 1]) == 0) {
+                    l1Idx--;
+                    targetL2 = prevL2; 
+                    l2Idx = targetL2.numUsed - 1;
                 } else {
                     searching = false;
                 }
+            } else {
+                searching = false;
             }
         }
-        return new ListLoc(l1Idx, l2Idx);
     }
-
+    return new ListLoc(l1Idx, l2Idx);
+}
     /**
-     * find location after the last matching entry or if no match, it finds the
-     * index of the next larger item this is the position to add a new entry
-     * this might be an unused slot at the end of a level 2 array
+     * find location after the last matching entry or if no match, it finds
+     * the index of the next larger item this is the position to add a new 
+     * entry this might be an unused slot at the end of a level 2 array
      *
      * @param item the thing we are searching for a place to put.
      * @return the location where this item should go
@@ -255,9 +260,10 @@ public class RaggedArrayList<E> implements Iterable<E> {
     public ListLoc findEnd(E item) {
         int l1Idx = 0;
 
+       
         while (l1Idx < l1NumUsed - 1) {
             L2Array currentL2 = (L2Array) l1Array[l1Idx];
-
+            
             if (comp.compare(item, currentL2.items[currentL2.numUsed - 1]) >= 0) {
                 l1Idx++;
             } else {
@@ -269,24 +275,25 @@ public class RaggedArrayList<E> implements Iterable<E> {
         int l2Idx = Arrays.binarySearch(targetL2.items, 0, targetL2.numUsed, item, comp);
 
         if (l2Idx < 0) {
-
+           
             l2Idx = -(l2Idx + 1);
         } else {
-
+            
             boolean searching = true;
             while (searching) {
-
+           
                 while (l2Idx < targetL2.numUsed && comp.compare(item, targetL2.items[l2Idx]) == 0) {
                     l2Idx++;
                 }
 
+               
                 if (l2Idx == targetL2.numUsed && l1Idx < l1NumUsed - 1) {
                     L2Array nextL2 = (L2Array) l1Array[l1Idx + 1];
-
+                   
                     if (nextL2.numUsed > 0 && comp.compare(item, nextL2.items[0]) == 0) {
                         l1Idx++;
                         targetL2 = nextL2;
-                        l2Idx = 0;
+                        l2Idx = 0; 
                     } else {
                         searching = false;
                     }
@@ -333,16 +340,23 @@ public class RaggedArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * add object in sorted order, placing duplicates at the earliest matching
-     * position to keep deterministic ordering
+     * add object in sorted order, placing duplicates at the earliest
+     * matching position to keep deterministic ordering
      *
      * @param item the thing we are searching for a place to put.
      * @return
      */
     public boolean add(E item) {
         // find insertion point using earliest matching position
-        ListLoc loc = findEnd(item);
+        ListLoc loc = findFront(item);
         L2Array target = (L2Array) l1Array[loc.level1Index];
+
+        // if target row is full, split first to create room
+        if (target.numUsed == target.items.length) {
+            splitL2(loc.level1Index);
+            loc = findFront(item);
+            target = (L2Array) l1Array[loc.level1Index];
+        }
 
         // shift items to open a slot, then insert
         System.arraycopy(target.items, loc.level2Index, target.items,
@@ -351,14 +365,9 @@ public class RaggedArrayList<E> implements Iterable<E> {
         target.numUsed++;
         size++;
 
-        // if target row is full, split first to create room
+        // if the insert left this row full, split to restore invariants
         if (target.numUsed == target.items.length) {
-            if (target.items.length < l1Array.length) {
-                target.items = Arrays.copyOf(target.items,
-                        target.items.length * 2);
-            } else {
-                splitL2(loc.level1Index);
-            }
+            splitL2(loc.level1Index);
         }
 
         return true;
@@ -371,19 +380,9 @@ public class RaggedArrayList<E> implements Iterable<E> {
      * @return true if the item is already in the data structure
      */
     public boolean contains(E item) {
-        ListLoc loc = findFront(item);
-        
-        if (loc.level1Index >= l1NumUsed){
-            return false;
-        }
-        
-        L2Array target = (L2Array) l1Array[loc.level1Index];
-        
-        if (loc.level2Index >= target.numUsed){
-            return false;
-        }
+        // TO DO in part 5 and NOT BEFORE
 
-        return comp.compare(item, target.items[loc.level2Index]) == 0;
+        return false;
     }
 
     /**
@@ -415,8 +414,8 @@ public class RaggedArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * returns an iterator for this list this method just creates an instance of
-     * the inner Itr() class (DONE)
+     * returns an iterator for this list this method just creates an instance
+     * of the inner Itr() class (DONE)
      *
      * @return an iterator
      */
@@ -450,10 +449,10 @@ public class RaggedArrayList<E> implements Iterable<E> {
         }
 
         /**
-         * return item and move to next throws NoSuchElementException if off end
-         * of list. An exception is thrown here because calling next() without
-         * calling hasNext() shows a certain level or stupidity on the part of
-         * the programmer, so it can blow up. They deserve it.
+         * return item and move to next throws NoSuchElementException if 
+         * off end of list.  An exception is thrown here because calling 
+         * next() without calling hasNext() shows a certain level or stupidity
+         * on the part of the programmer, so it can blow up. They deserve it.
          */
         public E next() {
             // TO DO in part 5 and NOT BEFORE
